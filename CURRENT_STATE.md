@@ -15,7 +15,13 @@ certificate definition. The theorem has no verifier-computability premise.
 `tests/VerifierChecks.lean` passes five concrete input/certificate cases and
 four axiom audits. In particular, the actual machine theorem and the main
 ∃SO-to-NP theorem depend only on `propext`, `Classical.choice`, and `Quot.sound`.
-Full kernel replay of this newest checkpoint is in progress (session `71751`).
+The full kernel replay passed in 4m39s. The subsequent Lax statement inspection
+found that the root module must explicitly import every package module, even
+those already imported transitively. After adding those imports, the complete
+ordinary Lax build passed in 34s (4 concepts, 2 annotated proofs). The proof
+sources and their dependency closure were unchanged by that packaging fix.
+No build or test process remains running; only the requested preview server
+remains active.
 
 The main `npDefinable` and `capturesNP` obligations remain unproved. The
 goal is active; do not report the whole Fagin theorem complete.

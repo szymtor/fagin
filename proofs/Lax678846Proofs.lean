@@ -19,4 +19,11 @@ import Lax678846Proofs.FirstOrderEvaluation
 import Lax678846Proofs.RelationCertificates
 import Lax678846Proofs.CertificateVerifier
 import Lax678846Proofs.PairEncoding
+import Lax678846Proofs.StackPair
+import Lax678846Proofs.StackCertificateHeader
+import Lax678846Proofs.WitnessStructure
+import Lax678846Proofs.StackEmbedding
+import Lax678846Proofs.VerifierLayout
+import Lax678846Proofs.VerifierEvaluation
+import Lax678846Proofs.VerifierMachine
 import Lax678846Proofs.DefinableInNP
