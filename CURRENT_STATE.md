@@ -106,8 +106,34 @@ Lax warnings remain for depending on an upstream proof package and a draft
 submission. The direct proof dependency is deliberate: it reuses the actual
 proved construction rather than adding unproved simulation premises.
 
-Next: convert Prop-valued stage witnesses to the Boolean interpretations
-used by the new ∃SO syntax, then add/check the existential auxiliary order.
-Use `ULift (Fin n)` for the chosen-order domain when applying mathlib's
-`linearOrderOfSTO` and `Fintype.orderIsoFinOfCardEq`; this avoids overriding
-the canonical order instance on the target `Fin n`.
+## Boolean witnesses and auxiliary order
+
+Two further modules compile after the replayed checkpoint `ec56031`:
+
+- `BooleanWitnesses`: Prop-valued relation tables and Boolean witness
+  interpretations are interchangeable. `lfp_exists_iff` expresses the LFP
+  elimination using the actual FO syntax and Boolean interpretations in
+  the ∃SO concepts, with the order relation fixed canonically for now.
+- `OrderEnumeration.enumerate`: every strict total relation on `Fin n` is
+  obtained from the canonical strict order by a permutation, including
+  empty domains. It uses `linearOrderOfSTO` and
+  `Fintype.orderIsoFinOfCardEq` on a dedicated `Point n` wrapper. `ULift`
+  was unsuitable because it inherits order instances that conflict with
+  the chosen order; the dedicated wrapper has no such inherited instances.
+
+The expanded `IterationChecks.lean` regression test and seven axiom audits
+pass; the new lemmas use only the standard background axioms. The full
+ordinary Lax build passes in 11s (4 concepts, 1 annotated proof). The earlier
+kernel replay covers the central elimination construction; the two newest
+modules still need inclusion in the next full replay. No processes are
+running at this checkpoint.
+
+Next: write the first-order strict-total-order assertion and use the
+enumeration lemma, structure relabeling, and the proved FO isomorphism
+invariance to eliminate the auxiliary order. Then connect the single-rule-
+closure elimination to Immerman–Vardi's concrete reverse construction and
+implement the certificate preprocessing/verification bridges for both
+directions. Mathlib's general `TM2ComputableInPolyTime.comp` is still
+`proof_wanted`; do not use it as an unproved axiom. The existing
+`StackProgram` compiler supports verified sequential composition of its
+programs and is a candidate for the preprocessing work.

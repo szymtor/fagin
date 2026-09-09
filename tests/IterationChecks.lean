@@ -1,5 +1,7 @@
 import Lax678846Proofs.LfpElimination
 import Lax678846Proofs.Isomorphism
+import Lax678846Proofs.BooleanWitnesses
+import Lax678846Proofs.OrderEnumeration
 
 open Lax678846Proofs Lax979537.LeastFixedPoints
 
@@ -19,3 +21,5 @@ example : ¬ ∃ H : Fin 2 → Set Unit,
 #print axioms RelationSlices.eval_translate
 #print axioms IterationFormula.eval_formula
 #print axioms LfpElimination.exists_matrix_iff
+#print axioms BooleanWitnesses.lfp_exists_iff
+#print axioms OrderEnumeration.enumerate

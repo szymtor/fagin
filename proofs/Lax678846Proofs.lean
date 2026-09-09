@@ -7,3 +7,5 @@ import Lax678846Proofs.TupleIteration
 import Lax678846Proofs.StageFormulas
 import Lax678846Proofs.IterationFormula
 import Lax678846Proofs.LfpElimination
+import Lax678846Proofs.BooleanWitnesses
+import Lax678846Proofs.OrderEnumeration
