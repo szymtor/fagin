@@ -1,1 +1,9 @@
 import Lax678846Proofs.IterationCertificates
+import Lax678846Proofs.Isomorphism
+import Lax678846Proofs.OrderedFirstOrder
+import Lax678846Proofs.RelationSlices
+import Lax678846Proofs.FirstOrderMacros
+import Lax678846Proofs.TupleIteration
+import Lax678846Proofs.StageFormulas
+import Lax678846Proofs.IterationFormula
+import Lax678846Proofs.LfpElimination
