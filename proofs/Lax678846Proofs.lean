@@ -9,3 +9,13 @@ import Lax678846Proofs.IterationFormula
 import Lax678846Proofs.LfpElimination
 import Lax678846Proofs.BooleanWitnesses
 import Lax678846Proofs.OrderEnumeration
+import Lax678846Proofs.OrderFormula
+import Lax678846Proofs.OrderRemoval
+import Lax678846Proofs.SmallDomains
+import Lax678846Proofs.RuleMatrices
+import Lax678846Proofs.PtimeExistential
+import Lax678846Proofs.ExistentialProjection
+import Lax678846Proofs.FirstOrderEvaluation
+import Lax678846Proofs.RelationCertificates
+import Lax678846Proofs.CertificateVerifier
+import Lax678846Proofs.PairEncoding

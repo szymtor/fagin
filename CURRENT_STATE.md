@@ -57,7 +57,7 @@ and input/computation encoding. Immerman, *Descriptive Complexity*, chapter
 7, gives a second detailed source. Fagin’s original 1974 paper is referenced
 in the manifest. Sources were checked online in this session.
 
-## First proof checkpoint
+## First proof checkpoint (historical)
 
 The four concept modules compile. Nine proof modules compile:
 
@@ -106,7 +106,7 @@ Lax warnings remain for depending on an upstream proof package and a draft
 submission. The direct proof dependency is deliberate: it reuses the actual
 proved construction rather than adding unproved simulation premises.
 
-## Boolean witnesses and auxiliary order
+## Boolean witnesses and auxiliary order (checkpoint `fcfe641`)
 
 Two further modules compile after the replayed checkpoint `ec56031`:
 
@@ -137,3 +137,91 @@ directions. Mathlib's general `TM2ComputableInPolyTime.comp` is still
 `proof_wanted`; do not use it as an unproved axiom. The existing
 `StackProgram` compiler supports verified sequential composition of its
 programs and is a candidate for the preprocessing work.
+
+## Current implementation after `fcfe641`
+
+The user explicitly emphasized reusing Immerman–Vardi in the ∃SO-to-NP
+direction too: guess the relation tables, then use the existing polynomial
+  first-order evaluator. The implementation follows that instruction. The
+concepts still use the standard binary-certificate definition of NP.
+
+New proof modules:
+
+- `OrderFormula`: a first-order strict-total-order assertion, with its
+  semantic equivalence and correctness for the canonical order.
+- `OrderRemoval`: relabel structures by an enumeration of the guessed
+  order; transport all witnesses and use isomorphism invariance. This
+  produces ordinary unordered ∃SO sentences, including on empty domains.
+- `SmallDomains`: extend an ordered existential definition valid above a
+  fixed threshold using the actual first-order finite diagrams from the
+  upstream proof, then remove order.
+- `RuleMatrices`: translate the concrete parameterized rule closure and
+  acceptance rules from Immerman–Vardi into the stage-table elimination.
+- `PtimeExistential.of_machine`: an invariant Boolean property decided by
+  a concrete polynomial-time TM2 has an ordinary ∃SO definition. This now
+  compiles using the actual upstream machine simulation, with no simulation
+  assumption or unproved complexity-closure axiom.
+- `ExistentialProjection`: move one input relation into the existential
+  witness prefix, preserving satisfaction. Repetition handles finite lists
+  of guessed input relations.
+- `FirstOrderEvaluation`: translate the new FO matrix syntax to the
+  existing evaluator; reuse its individual first-order compiler-correctness
+  lemmas, retaining the polynomial stack-step bound. Guessed relations are
+  supplied as materialized table inputs. This does not yet include the
+  input/certificate decoding wrapper.
+- `RelationCertificates`: encode witness relations as characteristic
+  tables, reuse the upstream relation decoder, prove decoding and encoding
+  correctness, and bound certificate length by `tablePolynomial τ` evaluated
+  at the original input length. Compiles, including empty/nullary cases.
+- `CertificateVerifier`: a specific verifier that rejects malformed input
+  encodings and certificates and runs the existing FO evaluator. Its
+  semantic certificate characterization and reduction of ∃SO-to-NP to this
+  verifier's concrete polynomial machine compile. The machine
+  obligation is explicit and remains unproved.
+- `PairEncoding`: the tagged pair decoder, round-trip laws, injectivity,
+  and length formula for the pair encoding in the NP concepts.
+
+All three Fagin statements remain unproved. In the reverse direction the
+remaining computational work is the actual pair-splitting, decoding, and
+evaluation wrapper. In NP-to-∃SO the standard verifier must still be
+connected to an expanded-structure computation, with certificate and size
+checks. Do not infer either NP direction from the deterministic theorem
+alone, and do not replace standard NP by a relational-projection definition.
+
+All new modules compile together (`lake build Lax678846Proofs`, 1363 jobs).
+`tests/CertificateChecks.lean` passes: nullary/empty-domain and malformed-input
+checks, plus ten axiom audits. Every audited theorem depends only on the
+standard background axioms (or a subset). No new concept declarations or
+proof axioms were added. The previous iteration regression suite and its
+seven audits also pass.
+
+`env LEAN_NUM_THREADS=2 lax build . --replay --no-color` passed in 2m18s,
+including 2m11s kernel replay, with 4 concepts and 1 annotated proof inspected.
+The three remaining warnings are the deliberate upstream proof-package
+dependency and the two references to the upstream draft. This validates
+the implemented helper proofs; it does not discharge the three main Fagin
+obligations. No validation processes remain running at this checkpoint.
+
+Concrete next steps for the ∃SO-to-NP machine wrapper:
+
+1. A small `StackTransfer.BitProgram` splits `encodePair (w,c)` into a stack
+   for `w` and a stack for `c`; `PairEncoding` supplies its functional spec.
+2. Embed `FiniteDecoder.program σ 0` using `StackRename.executes_in_sum`.
+   This preserves the external certificate stack. Reuse its decoded
+   domain and input tables; run `StackReadRelations.readTables` for the
+   witness vocabulary on the certificate stack and check the end of it.
+   `DecoderAgreement.tables_agree` and the existing decoder-correctness
+   lemmas are available for this bridge. Ensure the witness decoder has a
+   counter pool large enough for the witness arities, not only the input
+   vocabulary arities.
+3. Apply `FirstOrderEvaluation.executes`, then `StackOutput.output` and
+   `StackProgram.program_polytime`. This avoids the unproved general
+   mathlib composition theorem entirely. Supply the result to
+   `CertificateVerifier.inNP_of_computable` and prove the annotated main
+   ∃SO-to-NP obligation for arbitrary definable properties.
+
+For NP-to-∃SO, keep a version of the deterministic construction before
+order removal: a certificate verifier query on expanded structures need
+not itself be invariant under arbitrary relabelings. Existential projection
+must precede the final use of invariance of the original property. Do not
+silently assume invariance of the expanded verifier query.
