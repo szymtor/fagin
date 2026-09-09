@@ -7,15 +7,15 @@ open Lax979537Proofs.StackProgram Lax979537Proofs.StackTransfer
 
 variable {K Aux : Type} [DecidableEq K]
 
-abbrev SelectProgram (K Aux : Type) := BitProgram K (Aux × Option Bool)
-abbrev SelectStore (K Aux : Type) := BitStore K (Aux × Option Bool)
+abbrev SelectProgram (K Aux : Type) := BitProgram K (Aux × Bool)
+abbrev SelectStore (K Aux : Type) := BitStore K (Aux × Bool)
 
 def readData (data : K) : SelectProgram K Aux :=
-  .atom (.pop data (fun s b => ((s.1.1, b), s.2)))
+  .atom (.pop data (fun s b => ((s.1.1, b.getD false), s.2)))
 
 def emit (dst : K) : SelectProgram K Aux :=
   .branch (fun s => s.2.getD false)
-    (.atom (.push dst (fun s => s.1.2.getD false))) (.atom (.load id))
+    (.atom (.push dst (fun s => s.1.2))) (.atom (.load id))
 
 def body (mask data dst : K) : SelectProgram K Aux :=
   .seq (readData data) (.seq (emit dst) (read mask))
@@ -27,16 +27,16 @@ def loop (mask data dst : K) : SelectProgram K Aux :=
 The selected word is pushed in reverse order onto the destination. -/
 def select (mask data dst : K) : SelectProgram K Aux :=
   .seq (read mask) (.seq (loop mask data dst)
-    (.atom (.load (fun s => ((s.1.1, none), none)))))
+    (.atom (.load (fun s => ((s.1.1, true), none)))))
 
 def working (base : K → List Bool) (mask data dst : K)
-    (ms ds ys : List Bool) (a : Aux) (bit marker : Option Bool) : SelectStore K Aux :=
+    (ms ds ys : List Bool) (a : Aux) (bit : Bool) (marker : Option Bool) : SelectStore K Aux :=
   ⟨((a, bit), marker), Function.update (Function.update (Function.update base mask ms) data ds) dst ys⟩
 
 theorem pop_mask (base : K → List Bool) (mask data dst : K)
     (hmd : mask ≠ data) (hmy : mask ≠ dst) (ms ds ys : List Bool)
-    (a : Aux) (bit marker : Option Bool) :
-    Op.apply (.pop mask (fun s : (Aux × Option Bool) × Option Bool => fun b => (s.1, b)))
+    (a : Aux) (bit : Bool) (marker : Option Bool) :
+    Op.apply (.pop mask (fun s : (Aux × Bool) × Option Bool => fun b => (s.1, b)))
       (working base mask data dst ms ds ys a bit marker) =
       working base mask data dst ms.tail ds ys a bit ms.head? := by
   apply Store.ext
@@ -47,10 +47,10 @@ theorem pop_mask (base : K → List Bool) (mask data dst : K)
 
 theorem pop_data (base : K → List Bool) (mask data dst : K)
     (hmd : mask ≠ data) (hdy : data ≠ dst) (ms ds ys : List Bool)
-    (a : Aux) (bit marker : Option Bool) :
-    Op.apply (.pop data (fun s : (Aux × Option Bool) × Option Bool => fun b => ((s.1.1, b), s.2)))
+    (a : Aux) (bit : Bool) (marker : Option Bool) :
+    Op.apply (.pop data (fun s : (Aux × Bool) × Option Bool => fun b => ((s.1.1, b.getD false), s.2)))
       (working base mask data dst ms ds ys a bit marker) =
-      working base mask data dst ms ds.tail ys a ds.head? marker := by
+      working base mask data dst ms ds.tail ys a (ds.head?.getD false) marker := by
   apply Store.ext
   · simp [Op.apply, working, hdy]
   · funext key
@@ -59,16 +59,16 @@ theorem pop_data (base : K → List Bool) (mask data dst : K)
 
 theorem emit_executes (base : K → List Bool) (mask data dst : K)
     (ms ds ys : List Bool) (a : Aux) (b m : Bool) :
-    Executes (emit dst) (working base mask data dst ms ds ys a (some b) (some m))
-      (working base mask data dst ms ds (if m then b :: ys else ys) a (some b) (some m)) 2 := by
+    Executes (emit dst) (working base mask data dst ms ds ys a b (some m))
+      (working base mask data dst ms ds (if m then b :: ys else ys) a b (some m)) 2 := by
   cases m with
   | false => exact Executes.branch_false rfl (Executes.atom (.load id) _)
   | true =>
-    have h := Executes.atom (.push dst (fun s : (Aux × Option Bool) × Option Bool => s.1.2.getD false))
-      (working base mask data dst ms ds ys a (some b) (some true))
-    have he : Op.apply (.push dst (fun s : (Aux × Option Bool) × Option Bool => s.1.2.getD false))
-        (working base mask data dst ms ds ys a (some b) (some true)) =
-        working base mask data dst ms ds (b :: ys) a (some b) (some true) := by
+    have h := Executes.atom (.push dst (fun s : (Aux × Bool) × Option Bool => s.1.2))
+      (working base mask data dst ms ds ys a b (some true))
+    have he : Op.apply (.push dst (fun s : (Aux × Bool) × Option Bool => s.1.2))
+        (working base mask data dst ms ds ys a b (some true)) =
+        working base mask data dst ms ds (b :: ys) a b (some true) := by
       apply Store.ext
       · rfl
       · funext key
@@ -78,7 +78,7 @@ theorem emit_executes (base : K → List Bool) (mask data dst : K)
 
 theorem loop_executes (base : K → List Bool) (mask data dst : K)
     (hmd : mask ≠ data) (hmy : mask ≠ dst) (hdy : data ≠ dst)
-    (ms ds ys : List Bool) (hlen : ms.length = ds.length) (a : Aux) (bit : Option Bool) :
+    (ms ds ys : List Bool) (hlen : ms.length = ds.length) (a : Aux) (bit : Bool) :
     ∃ last, Executes (loop mask data dst)
       (working base mask data dst ms.tail ds ys a bit ms.head?)
       (working base mask data dst [] [] ((BinaryCertificates.select ms ds).reverse ++ ys) a last none)
@@ -94,19 +94,19 @@ theorem loop_executes (base : K → List Bool) (mask data dst : K)
     | cons b ds =>
       have hl : ms.length = ds.length := by simpa using hlen
       let ys' := if m then b :: ys else ys
-      obtain ⟨last, ht⟩ := ih ds ys' hl (some b)
+      obtain ⟨last, ht⟩ := ih ds ys' hl b
       have hp := Executes.atom
-        (.pop data (fun s : (Aux × Option Bool) × Option Bool => fun b => ((s.1.1, b), s.2)))
+        (.pop data (fun s : (Aux × Bool) × Option Bool => fun b => ((s.1.1, b.getD false), s.2)))
         (working base mask data dst ms (b :: ds) ys a bit (some m))
       rw [pop_data base mask data dst hmd hdy] at hp
       have he := emit_executes base mask data dst ms ds ys a b m
       have hr := Executes.atom
-        (.pop mask (fun s : (Aux × Option Bool) × Option Bool => fun b => (s.1, b)))
-        (working base mask data dst ms ds ys' a (some b) (some m))
+        (.pop mask (fun s : (Aux × Bool) × Option Bool => fun b => (s.1, b)))
+        (working base mask data dst ms ds ys' a b (some m))
       rw [pop_mask base mask data dst hmd hmy] at hr
       have hb := Executes.seq hp (Executes.seq he hr)
       have hh := Executes.loop_true (p := body mask data dst)
-        (b := fun s : (Aux × Option Bool) × Option Bool => s.2.isSome) rfl hb ht
+        (b := fun s : (Aux × Bool) × Option Bool => s.2.isSome) rfl hb ht
       have ht' : (1 + (2 + 1)) + (5 * ms.length + 1) + 1 = 5 * (ms.length + 1) + 1 := by omega
       refine ⟨last, ?_⟩
       cases m <;> simpa only [List.tail_cons, List.head?_cons, List.length_cons,
@@ -115,16 +115,16 @@ theorem loop_executes (base : K → List Bool) (mask data dst : K)
 
 theorem select_executes (base : K → List Bool) (mask data dst : K)
     (hmd : mask ≠ data) (hmy : mask ≠ dst) (hdy : data ≠ dst)
-    (ms ds ys : List Bool) (hlen : ms.length = ds.length) (a : Aux) (bit marker : Option Bool) :
+    (ms ds ys : List Bool) (hlen : ms.length = ds.length) (a : Aux) (bit : Bool) (marker : Option Bool) :
     Executes (select mask data dst) (working base mask data dst ms ds ys a bit marker)
-      (working base mask data dst [] [] ((BinaryCertificates.select ms ds).reverse ++ ys) a none none)
+      (working base mask data dst [] [] ((BinaryCertificates.select ms ds).reverse ++ ys) a true none)
       (5 * ms.length + 3) := by
   have hp := Executes.atom
-    (.pop mask (fun s : (Aux × Option Bool) × Option Bool => fun b => (s.1, b)))
+    (.pop mask (fun s : (Aux × Bool) × Option Bool => fun b => (s.1, b)))
     (working base mask data dst ms ds ys a bit marker)
   rw [pop_mask base mask data dst hmd hmy] at hp
   obtain ⟨last, hl⟩ := loop_executes base mask data dst hmd hmy hdy ms ds ys hlen a bit
-  have hr := Executes.atom (.load (fun s : (Aux × Option Bool) × Option Bool => ((s.1.1, none), none)))
+  have hr := Executes.atom (.load (fun s : (Aux × Bool) × Option Bool => ((s.1.1, true), none)))
     (working base mask data dst [] [] ((BinaryCertificates.select ms ds).reverse ++ ys) a last none)
   have hh := Executes.seq hp (Executes.seq hl hr)
   have ht : 1 + ((5 * ms.length + 1) + 1) = 5 * ms.length + 3 := by omega
@@ -134,7 +134,7 @@ theorem select_store (mask data dst : K)
     (hmd : mask ≠ data) (hmy : mask ≠ dst) (hdy : data ≠ dst)
     (s : SelectStore K Aux) (hlen : (s.stk mask).length = (s.stk data).length) :
     Executes (select mask data dst) s
-      ⟨((s.state.1.1, none), none),
+      ⟨((s.state.1.1, true), none),
         Function.update (Function.update (Function.update s.stk mask []) data []) dst
           ((BinaryCertificates.select (s.stk mask) (s.stk data)).reverse ++ s.stk dst)⟩
       (5 * (s.stk mask).length + 3) := by

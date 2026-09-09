@@ -1,13 +1,61 @@
 # Fagin formalization
 
-Active goal: formalize Fagin’s theorem and its complete proof.
+Completed objective: formalize Fagin’s theorem and its complete proof.
 Created 2026-09-09 in `fagin`, local Lax ID `lax-678846`.
 
 The user authorizes autonomous work and requests approval only for security
 permissions. Use `tmp` under the workspace, never `/private/tmp`, for working
 files. No subagents are authorized. No token budget was requested.
 
-## Latest status: NP reduction and verified machine composition
+## Latest status: complete and validated
+
+All three main proof declarations now compile:
+
+- `Lax678846Proofs.Fagin.definableInNP`
+- `Lax678846Proofs.Fagin.npDefinable`
+- `Lax678846Proofs.Fagin.capturesNP`
+
+They have exactly the public concept statements, with no preprocessor,
+simulation, composition, or verifier-computability assumptions. The complete
+proof package builds (1418 jobs). `tests/FaginChecks.lean` passes four
+boundary cases and seven axiom audits; all three main theorems use only
+`propext`, `Classical.choice`, and `Quot.sound`. All five regression suites
+pass: `FaginChecks`, `NPReductionChecks`, `VerifierChecks`,
+`CertificateChecks`, and `IterationChecks`.
+The proof sources contain no `sorry`, new axioms, `native_decide`, or unsafe
+declarations. The original four concept files remain unchanged.
+
+Final `lax build . --replay --no-color` passed in 5m13s, including 5m03s
+kernel replay and inspection of 4 concepts and 4 annotated proofs. Session
+`47551` is terminal with exit code zero. `build-output.json` records replay
+validation and no assumptions for any of the four proofs. The three warnings
+concern the deliberate upstream proof-package dependency and its draft status.
+
+The refreshed preview at <http://localhost:8126/lax-678846/index.html> was
+checked successfully: all three Fagin statements and isomorphism invariance
+are marked proved, and the new proof links are present. Preview server session
+`20474` remains live. No build or test remains running. This is a completed
+local submission; it has not been published to the public archive.
+
+The new concrete preprocessor is proved in `PreprocessorMachine`:
+decode the expanded structure; reconstruct the base encoding; evaluate
+the exact original certificate bound using `StackPolynomial`; extract the
+certificate; compare its length; and emit a guarded, tagged pair. Malformed
+encodings receive a false guard. `GuardedVerifier.computable` runs the
+original verifier and conjoins the guard, and `PolynomialComposition.comp`
+combines the actual machines. `ExpandedVerifier.ordered_definable` invokes
+the ordered deterministic construction. `NPDefinable` then projects the
+certificate relations, patches the two smallest domains and removes order.
+
+The former `StackSelect` optional data register was reduced to a Boolean
+register, since mask/data tables have equal lengths. This allows directly
+sharing the existing decoder/evaluator control layout; the universal
+selection-correctness proof and its linear bound have been rechecked.
+
+The abstract now describes the implemented proof in both directions.
+All 17 newly added proof files are explicitly imported by the package root.
+
+## Checkpoint `1fe0b79`: NP reduction and verified machine composition
 
 The entire proof package builds (1401 jobs). The ∃SO-to-NP theorem remains
 proved. NP-to-∃SO is still open: the remaining substantive obligation is the
@@ -50,10 +98,11 @@ Ten further machine modules compile:
 `tests/NPReductionChecks.lean` passes non-prefix masks, empty/nullary cases,
 composition of two reverse machines, and seven axiom audits. Every audited
 theorem uses only `propext`, `Classical.choice`, and `Quot.sound`. Full Lax
-validation and kernel replay are running in session `13634`; concept and
-proof compilation have passed. Record the terminal result before claiming
-a replay pass. All package modules are explicitly imported by the root,
-including those already imported transitively.
+validation passed for checkpoint `1fe0b79` in 33m17s, including 32m59s kernel
+replay and inspection of 4 concepts and 2 annotated proofs. Session `13634`
+is terminal. The three expected dependency warnings remain. All package
+modules are explicitly imported by the root, including those already
+imported transitively.
 
 Concrete next implementation steps:
 
