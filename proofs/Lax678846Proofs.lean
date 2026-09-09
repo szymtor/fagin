@@ -27,3 +27,17 @@ import Lax678846Proofs.VerifierLayout
 import Lax678846Proofs.VerifierEvaluation
 import Lax678846Proofs.VerifierMachine
 import Lax678846Proofs.DefinableInNP
+import Lax678846Proofs.OrderedDefinitions
+import Lax678846Proofs.CertificateCapacity
+import Lax678846Proofs.BinaryCertificates
+import Lax678846Proofs.RelationalVerifier
+import Lax678846Proofs.TMStatements
+import Lax678846Proofs.TMInterpreter
+import Lax678846Proofs.TMComputable
+import Lax678846Proofs.StackControl
+import Lax678846Proofs.StackSum
+import Lax678846Proofs.StackMapTransfer
+import Lax678846Proofs.StackBitTransfer
+import Lax678846Proofs.MachineComposition
+import Lax678846Proofs.PolynomialComposition
+import Lax678846Proofs.StackSelect

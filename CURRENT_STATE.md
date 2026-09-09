@@ -7,7 +7,81 @@ The user authorizes autonomous work and requests approval only for security
 permissions. Use `tmp` under the workspace, never `/private/tmp`, for working
 files. No subagents are authorized. No token budget was requested.
 
-## Latest status: ∃SO-to-NP machine implemented
+## Latest status: NP reduction and verified machine composition
+
+The entire proof package builds (1401 jobs). The ∃SO-to-NP theorem remains
+proved. NP-to-∃SO is still open: the remaining substantive obligation is the
+polynomial-time preprocessor for the expanded structure, followed by its
+connection to the ordered deterministic theorem and final annotated proof.
+
+Four new logical/encoding modules compile:
+
+- `OrderedDefinitions`: the actual upstream PTime construction before
+  order removal, with no invariance assumption on the expanded query;
+  existential projection and small-domain patching are proved.
+- `CertificateCapacity`: choose a fixed relation arity large enough for
+  every certificate of the original polynomial length bound when `n ≥ 2`.
+- `BinaryCertificates`: two relations of that arity store a selection mask
+  and data. Arbitrary masks select subsequences; every bounded binary word
+  is representable. The original NP length check is retained exactly.
+- `RelationalVerifier`: the standard NP hypothesis supplies those witnesses.
+  Its `definable_of_ordered_verifier` proves the final logical reduction:
+  project both relations, patch domains of sizes zero and one, and remove
+  the guessed order using invariance of the original property only.
+
+Ten further machine modules compile:
+
+- `TMStatements`, `TMInterpreter`, `TMComputable`: implement an arbitrary
+  finite TM2 supplied by the NP hypothesis as a structured program. The
+  program counter is finite control, statement simulation has a constant
+  overhead, and the original polynomial bound is preserved.
+- `StackControl`, `StackSum`: preserve extra finite control and extra
+  stacks, including heterogeneous stack alphabets.
+- `StackMapTransfer`, `StackBitTransfer`: convert intermediate alphabets
+  through a Boolean scratch register, with a proved linear transfer cost.
+- `MachineComposition`, `PolynomialComposition`: actual polynomial-time
+  composition for any Boolean intermediate encoding. This is a proved
+  construction, not mathlib's unfinished general composition theorem.
+  The intermediate word length is bounded using the first program's step
+  count, and each constituent's work stacks/control are reset.
+- `StackSelect`: a concrete linear-time routine implementing the mask/data
+  certificate decoder, preserving unrelated stacks and auxiliary control.
+
+`tests/NPReductionChecks.lean` passes non-prefix masks, empty/nullary cases,
+composition of two reverse machines, and seven axiom audits. Every audited
+theorem uses only `propext`, `Classical.choice`, and `Quot.sound`. Full Lax
+validation and kernel replay are running in session `13634`; concept and
+proof compilation have passed. Record the terminal result before claiming
+a replay pass. All package modules are explicitly imported by the root,
+including those already imported transitively.
+
+Concrete next implementation steps:
+
+1. Implement the expanded-input preprocessor. Reuse `FiniteDecoder` and
+   reconstruct the base input from its domain and base-relation tables;
+   `StackSelect` extracts the guessed certificate. Alternatively, the
+   existing unary parser, power counters, and counted-prefix extractor can
+   split the two leading tables directly. The whole routine must have a
+   polynomial bound also on malformed input; agreement is needed on valid
+   structure encodings.
+2. Check the certificate's length against the original polynomial evaluated
+   at the reconstructed base-input length. For query arity zero,
+   `InputSize.encodingPolynomial σ 0` is EXACT, not merely an upper bound:
+   `StructureEncoding.encodeLength` has an empty coordinate sum. Therefore
+   evaluate the fixed polynomial `p.comp (encodingPolynomial σ 0)` directly
+   on the already decoded unary domain counter; there is no need to count
+   the reconstructed input again. Repeated uses of `StackPower` for its
+   finitely many monomials, followed by `StackCompare`/`StackCheckBound`,
+   provide the arithmetic. Produce the tagged `encodePair` input to the
+   original verifier.
+3. Use `PolynomialComposition.comp` for the original verifier and compose
+   the bound-check result appropriately. The expanded verifier query need
+   not be invariant, so use `OrderedDefinitions.of_machine`, then
+   `RelationalVerifier.definable_of_ordered_verifier`.
+4. Prove the annotated `npDefinable` and `capturesNP`, audit them and run
+   the full Lax kernel replay. Do not claim the goal complete before this.
+
+## Validated checkpoint: ∃SO-to-NP machine implemented
 
 The full annotated theorem `Lax678846Proofs.Fagin.definableInNP` now
 compiles. It supplies the concrete polynomial TM2 required by the standard
@@ -20,8 +94,8 @@ found that the root module must explicitly import every package module, even
 those already imported transitively. After adding those imports, the complete
 ordinary Lax build passed in 34s (4 concepts, 2 annotated proofs). The proof
 sources and their dependency closure were unchanged by that packaging fix.
-No build or test process remains running; only the requested preview server
-remains active.
+At that checkpoint no build or test process remained running; only the
+requested preview server remained active.
 
 The main `npDefinable` and `capturesNP` obligations remain unproved. The
 goal is active; do not report the whole Fagin theorem complete.
