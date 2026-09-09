@@ -7,6 +7,58 @@ The user authorizes autonomous work and requests approval only for security
 permissions. Use `tmp` under the workspace, never `/private/tmp`, for working
 files. No subagents are authorized. No token budget was requested.
 
+## Latest status: ∃SO-to-NP machine implemented
+
+The full annotated theorem `Lax678846Proofs.Fagin.definableInNP` now
+compiles. It supplies the concrete polynomial TM2 required by the standard
+certificate definition. The theorem has no verifier-computability premise.
+`tests/VerifierChecks.lean` passes five concrete input/certificate cases and
+four axiom audits. In particular, the actual machine theorem and the main
+∃SO-to-NP theorem depend only on `propext`, `Classical.choice`, and `Quot.sound`.
+Full kernel replay of this newest checkpoint is in progress (session `71751`).
+
+The main `npDefinable` and `capturesNP` obligations remain unproved. The
+goal is active; do not report the whole Fagin theorem complete.
+
+The user requested a preview. `lax serve . --port 8126 --no-color` is
+running, with the local concepts at
+http://localhost:8126/lax-678846/index.html. The index was fetched successfully
+and opened in the browser. Preview process session: `20474`; leave it running.
+It refreshes after a successful Lax build. Working preview HTML is in the
+workspace's `tmp/fagin-preview.html`, not `/private/tmp`.
+
+New modules after checkpoint `634a657`:
+
+- `StackPair`: split the actual tagged pair encoding with a verified
+  structured program, preserving all other stacks and auxiliary state.
+- `StackCertificateHeader`: copy the decoded unary domain counter and a
+  delimiter onto the certificate stack. This allows reusing the complete
+  upstream structure decoder for the witness vocabulary as well.
+- `WitnessStructure`: prove that the second structure decoder is exactly
+  the relation-certificate decoder after adding this header.
+- `StackEmbedding`: embed a program into the right part of a sum of stack
+  layouts; all other stacks are preserved, with unchanged execution cost.
+- `VerifierLayout`: the concrete finite stack layout, first and second
+  decoders, and the intervening header preparation. The second decoder has
+  its own counter pool, so arbitrary witness arities are supported.
+- `VerifierEvaluation`: the decoded base structure and witness tables
+  satisfy the existing FO evaluator's input invariant; reject invalid
+  certificates and otherwise run the verified evaluator.
+- `VerifierMachine`: assemble splitting, both decoders, evaluation,
+  rejection paths, cleanup and control reset. `computableInPolyTime`
+  supplies the actual TM2 verifier, with no composition axiom.
+- `DefinableInNP`: discharge the annotated ∃SO-to-NP concept obligation
+  using the concrete machine and the existing certificate size bound.
+
+Important implementation detail: `VerifierLayout.Port` includes a formula-
+dependent `Work` type. Equality-instance inference does not infer that
+formula reliably from its reduced type. The explicit `extraDecidableEq`
+and `portDecidableEq` use the standard sum equality construction, and the
+embedding proofs introduce the same extra instance locally. This keeps
+the `Executes` equality instances definitionally aligned. In state-update
+proofs, use explicit `change`, `Function.update_of_ne` and case splits;
+unrestricted simplification of entire decoded stores hit recursion limits.
+
 ## Statement and concepts
 
 The main theorem is `Definable Q ↔ InNP Q` for every fixed finite relational
@@ -138,7 +190,7 @@ directions. Mathlib's general `TM2ComputableInPolyTime.comp` is still
 `StackProgram` compiler supports verified sequential composition of its
 programs and is a candidate for the preprocessing work.
 
-## Current implementation after `fcfe641`
+## Implementation checkpoint `634a657`
 
 The user explicitly emphasized reusing Immerman–Vardi in the ∃SO-to-NP
 direction too: guess the relation tables, then use the existing polynomial

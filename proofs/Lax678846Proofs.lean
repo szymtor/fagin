@@ -19,3 +19,4 @@ import Lax678846Proofs.FirstOrderEvaluation
 import Lax678846Proofs.RelationCertificates
 import Lax678846Proofs.CertificateVerifier
 import Lax678846Proofs.PairEncoding
+import Lax678846Proofs.DefinableInNP
