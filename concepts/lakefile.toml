@@ -1,0 +1,19 @@
+name = "Lax988886"
+defaultTargets = ["Lax988886"]
+
+[leanOptions]
+autoImplicit = false
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "db584cd6d46c92f209a44c0f1c829460d327499d"
+
+[[lean_lib]]
+name = "Lax988886"
+
+[[require]]
+name = "Lax751879"
+git = "https://github.com/szymtor/immerman-vardi"
+rev = "82ef67e68fab884dc4cff117a1b871567bdaaafd"
+subDir = "concepts"
