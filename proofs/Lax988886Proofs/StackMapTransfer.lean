@@ -76,7 +76,7 @@ theorem loop_executes (base : ∀ k, List (Γ k)) (src dst : K)
         (Executes.seq hp hr) (ih (f b :: ys))
       have ht : (1 + 1) + (3 * bs.length + 1) + 1 = 3 * (bs.length + 1) + 1 := by omega
       simpa only [List.tail_cons, List.head?_cons, List.reverse_cons, List.map_append,
-        List.map_cons, List.map_nil, List.length_cons, List.append_assoc, List.singleton_append, ht] using hh
+        List.map_cons, List.map_nil, List.length_cons, List.append_assoc, List.singleton_append, ht] using! hh
 
 theorem transfer_executes (base : ∀ k, List (Γ k)) (src dst : K)
     (hne : src ≠ dst) (f : Γ src → Γ dst) (zero : Γ dst)
@@ -88,7 +88,7 @@ theorem transfer_executes (base : ∀ k, List (Γ k)) (src dst : K)
   rw [pop_working base src dst hne] at hr
   have h := Executes.seq hr (loop_executes base src dst hne f zero xs ys a)
   have ht : 1 + (3 * xs.length + 1) = 3 * xs.length + 2 := by omega
-  simpa only [ht] using h
+  simpa only [ht] using! h
 
 theorem transfer_store (src dst : K) (hne : src ≠ dst) (f : Γ src → Γ dst) (zero : Γ dst)
     (s : Store Γ (Aux × Option (Γ src))) :

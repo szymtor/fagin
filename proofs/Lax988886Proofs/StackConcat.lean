@@ -22,7 +22,7 @@ theorem copy_executes (out tmp : K) (hot : out ≠ tmp) (keys : List K)
       (7 * (keys.flatMap s.stk).length + 4 * keys.length + 1) := by
   induction keys with
   | nil =>
-    simpa [copy, result] using Executes.atom (.load (fun s : Aux × Option Bool => (s.1, none))) s
+    simpa [copy, result] using! Executes.atom (.load (fun s : Aux × Option Bool => (s.1, none))) s
   | cons key keys ih =>
     have hk := hkeys key (by simp)
     have hr : ∀ j ∈ keys, j ≠ out ∧ j ≠ tmp := fun j hj => hkeys j (by simp [hj])
@@ -42,6 +42,6 @@ theorem copy_executes (out tmp : K) (hot : out ≠ tmp) (keys : List K)
         7 * ((key :: keys).flatMap s.stk).length + 4 * (key :: keys).length + 1 := by
       simp only [List.flatMap_cons, List.length_append, List.length_cons]
       omega
-    simpa only [hc] using hh
+    simpa only [hc] using! hh
 
 end Lax988886Proofs.StackConcat

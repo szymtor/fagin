@@ -1,6 +1,9 @@
 import Lax988886.ExistentialSecondOrder
 import Lax751879.FixedPointSemantics
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.OrderedFirstOrder
 
 open Lax988886.FiniteStructures Lax988886.ExistentialSecondOrder

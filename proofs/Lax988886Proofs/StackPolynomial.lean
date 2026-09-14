@@ -37,7 +37,7 @@ theorem sumPowers_executes (domain out tmp : K)
   induction powers generalizing s with
   | nil =>
     refine ⟨1, by simp [cost], ?_⟩
-    simpa [sumPowers, StackPower.addTokens, value] using
+    simpa [sumPowers, StackPower.addTokens, value] using!
       Executes.atom (.load (fun s : Aux × Option Bool => (s.1, none))) s
   | cons cs rest ih =>
     obtain ⟨d, hd', hp⟩ := StackPower.power_executes domain out tmp hdo hdt hot cs

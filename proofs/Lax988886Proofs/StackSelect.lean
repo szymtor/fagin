@@ -111,7 +111,7 @@ theorem loop_executes (base : K → List Bool) (mask data dst : K)
       refine ⟨last, ?_⟩
       cases m <;> simpa only [List.tail_cons, List.head?_cons, List.length_cons,
         BinaryCertificates.select, Bool.false_eq_true, ↓reduceIte, List.reverse_cons,
-        List.append_assoc, List.singleton_append, ys', ht'] using hh
+        List.append_assoc, List.singleton_append, ys', ht'] using! hh
 
 theorem select_executes (base : K → List Bool) (mask data dst : K)
     (hmd : mask ≠ data) (hmy : mask ≠ dst) (hdy : data ≠ dst)
@@ -128,7 +128,7 @@ theorem select_executes (base : K → List Bool) (mask data dst : K)
     (working base mask data dst [] [] ((BinaryCertificates.select ms ds).reverse ++ ys) a last none)
   have hh := Executes.seq hp (Executes.seq hl hr)
   have ht : 1 + ((5 * ms.length + 1) + 1) = 5 * ms.length + 3 := by omega
-  simpa only [ht] using hh
+  simpa only [ht] using! hh
 
 theorem select_store (mask data dst : K)
     (hmd : mask ≠ data) (hmy : mask ≠ dst) (hdy : data ≠ dst)

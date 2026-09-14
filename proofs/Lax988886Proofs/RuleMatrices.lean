@@ -1,6 +1,9 @@
 import Lax988886Proofs.SmallDomains
 import Lax751879Proofs.RuleQuery
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.RuleMatrices
 
 open Lax751879.OrderedStructures Lax751879.FixedPointSyntax
@@ -89,7 +92,6 @@ theorem eval_queries {σ : Vocabulary} {k : Nat} (qs rs : List (Rule σ 0 k))
       (fun r => Fin.elim0 r) := by
   simp only [queries, eval_anyOf, exists_map, eval_query,
     Lax751879Proofs.RuleQuery.eval_formula, Fin.cons_zero]
-  rfl
 
 theorem exists_matrix_iff {σ : Vocabulary} {k : Nat} (qs rs : List (Rule σ 0 k))
     (A : OrderedStructure σ) (hn : 2 ≤ A.size) :

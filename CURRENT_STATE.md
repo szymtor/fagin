@@ -1,13 +1,22 @@
 # Lean 4.33 draft migration
 
-Original draft: lax-678846. New local draft: lax-988886.
-User authorized a separate draft with a link to the original, without supersedes.
-Sources are copied from the original published commit; namespaces, toolchain,
-mathlib and dependency names have been updated. Dependency commit pins for
-other new drafts are pending their validation and publication. No Lean 4.33
-validation has passed yet. No archive submission or registration performed.
+Original draft: lax-678846. New draft: lax-988886; branch lean-4.33.
+This is an independent draft linked to the original, without supersedes.
 
-Next: build, fix compatibility errors, validate/replay and submit in dependency order.
+Full proof build passed (1438 jobs). All five regression suites passed:
+FaginChecks, NPReductionChecks, VerifierChecks, CertificateChecks, IterationChecks.
+All audited theorems use only standard background axioms.
+Full Lax validation and kernel replay passed in 4m15s (4m05s replay):
+4 concepts and 4 annotated proofs, with no additional assumptions.
+Concept Lean files equal the published original after namespace renaming.
+Compatibility changes restore older elaboration/simplification transparency;
+no mathematical statements changed. The 24 inherited unused helpers are
+intentionally preserved, including regression interfaces and generated lemmas.
+The dependency on the Immerman–Vardi proof package is intentional and pinned
+to its published Lean 4.33 draft commit 22b06ecb75e26570ccfb67582c9e3d12e88fdf65.
+
+Next: push this validated branch and publish the independent archive draft.
+No registration requested or performed.
 
 ## Historical record from the original (not validation of this port)
 

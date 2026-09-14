@@ -41,7 +41,7 @@ theorem loop_executes (base : K → List Bool) (input rev : K) (hne : input ≠ 
     have hc : (1 + (1 + 1)) + (4 * w.length + 1) + 1 = 4 * (w.length + 1) + 1 := by omega
     simpa only [encodePair, List.flatMap_cons, List.cons_append, List.nil_append,
       List.tail_cons, List.head?_cons, List.reverse_cons, List.append_assoc,
-      List.singleton_append, List.length_cons, hc] using h
+      List.singleton_append, List.length_cons, hc] using! h
 
 theorem extract_executes (base : K → List Bool) (input rev : K) (hne : input ≠ rev)
     (w c ys : List Bool) (a : Aux) (scratch : Option Bool) :
@@ -51,7 +51,7 @@ theorem extract_executes (base : K → List Bool) (input rev : K) (hne : input �
     (working base input rev (encodePair (w,c)) ys a scratch)
   rw [pop_working base input rev hne] at hr
   have h := Executes.seq hr (loop_executes base input rev hne w c ys a)
-  convert h using 1 <;> omega
+  convert! h using 1 <;> omega
 
 /-- Separate the two words in the NP pair encoding. All other stacks and
 the auxiliary finite state are preserved; the scratch register is reset. -/
@@ -83,6 +83,6 @@ theorem split_executes (input rev word : K) (hir : input ≠ rev)
     · simp only [u, working, result, Function.update_idem]
   rw [hf] at ht
   have h := Executes.seq he ht
-  convert h using 1 <;> omega
+  convert! h using 1 <;> omega
 
 end Lax988886Proofs.StackPair

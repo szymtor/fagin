@@ -1,6 +1,8 @@
 import Lax988886Proofs.PreprocessorLayout
 import Lax988886Proofs.StackSelect
 
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.PreprocessorCertificate
 
 open Lax988886.FiniteStructures Lax751879Proofs

@@ -3,6 +3,9 @@ import Lax988886Proofs.StackSum
 import Lax988886Proofs.StackBitTransfer
 import Lax751879Proofs.StackOutput
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.MachineComposition
 
 open Turing Lax751879Proofs.StackProgram
@@ -43,7 +46,7 @@ theorem first_executes (a b : FinTM2) {xs : List (a.Γ a.k₀)} {ys : List (a.Γ
   have hh := StackControl.executes_extend
     (StackControl.executes_extend h (TMComputable.initial b)) (none : Option Bool)
   simp only [StackControl.store_ioStore] at hh
-  simpa only [StackSum.leftStore_ioStore] using
+  simpa only [StackSum.leftStore_ioStore] using!
     StackSum.executes_left (Δ := Sum.elim (fun _ : Unit => Bool) b.Γ) hh (fun _ => [])
 
 theorem second_executes (a b : FinTM2) {xs : List (b.Γ b.k₀)} {ys : List (b.Γ b.k₁)} {d : Nat}
@@ -59,7 +62,7 @@ theorem second_executes (a b : FinTM2) {xs : List (b.Γ b.k₀)} {ys : List (b.�
   simp only [StackControl.store_ioStore] at hh
   have hi := StackSum.executes_right (Γ := fun _ : Unit => Bool) hh (fun _ => [])
   simp only [StackSum.rightStore_ioStore] at hi
-  simpa only [StackSum.rightStore_ioStore] using
+  simpa only [StackSum.rightStore_ioStore] using!
     StackSum.executes_right (Γ := a.Γ) hi (fun _ => [])
 
 theorem move_executes (a b : FinTM2) (ea : a.Γ a.k₁ ≃ Bool) (eb : b.Γ b.k₀ ≃ Bool)
@@ -80,7 +83,7 @@ theorem move_executes (a b : FinTM2) (ea : a.Γ a.k₁ ≃ Bool) (eb : b.Γ b.k�
   erw [he2, List.length_reverse] at h2
   have hh := Executes.seq h1 h2
   have ht : (3 * xs.length + 2) + (3 * xs.length + 2) = 6 * xs.length + 4 := by omega
-  simpa only [ht] using hh
+  simpa only [ht] using! hh
 
 /-- Concrete composition across a Boolean intermediate alphabet. Both
 machines finish with clean work stacks and reset finite control. -/

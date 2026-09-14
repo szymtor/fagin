@@ -49,7 +49,7 @@ theorem loop_executes (base : K → List Bool) (src dst : K) (hne : src ≠ dst)
     have ht : (1 + (1 + 1)) + (4 * bs.length + 1) + 1 = 4 * (bs.length + 1) + 1 := by omega
     simpa only [List.tail_cons, List.head?_cons, List.length_cons, List.reverse_cons,
       tagged, List.flatMap_append, List.flatMap_cons, List.flatMap_nil,
-      List.append_nil, List.append_assoc, List.cons_append, List.nil_append, ht] using h
+      List.append_nil, List.append_assoc, List.cons_append, List.nil_append, ht] using! h
 
 theorem transfer_store (src dst : K) (hne : src ≠ dst) (s : BitStore K Aux) :
     Executes (transfer src dst) s
@@ -61,7 +61,7 @@ theorem transfer_store (src dst : K) (hne : src ≠ dst) (s : BitStore K Aux) :
   have h2 := loop_executes s.stk src dst hne (s.stk src) (s.stk dst) s.state.1
   have h := Executes.seq h1 h2
   have ht : 1 + (4 * (s.stk src).length + 1) = 4 * (s.stk src).length + 2 := by omega
-  simpa only [working, Function.update_eq_self, Prod.mk.eta, ht] using h
+  simpa only [working, Function.update_eq_self, Prod.mk.eta, ht] using! h
 
 /-- Form the exact tagged pair encoding used in the standard NP concept.
 The destination initially holds the certificate; the word is consumed. -/
@@ -104,6 +104,6 @@ theorem join_store (word dst tmp : K) (hwd : word ≠ dst) (hwt : word ≠ tmp) 
   have h := Executes.seq h1 (Executes.seq h2 h3)
   have ht : (3 * (s.stk word).length + 2) + (1 + (4 * (s.stk word).length + 2)) =
       7 * (s.stk word).length + 5 := by omega
-  simpa only [ht] using h
+  simpa only [ht] using! h
 
 end Lax988886Proofs.StackTag

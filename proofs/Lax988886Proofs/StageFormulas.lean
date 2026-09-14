@@ -2,6 +2,9 @@ import Lax988886Proofs.FirstOrderMacros
 import Lax988886Proofs.RelationSlices
 import Lax751879Proofs.AddressFormulas
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.StageFormulas
 
 open Lax751879.OrderedStructures Lax751879.FixedPointSyntax

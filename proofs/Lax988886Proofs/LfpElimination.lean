@@ -41,7 +41,7 @@ theorem eval_readLast {σ : Vocabulary} {k : Nat} (query : RawFormula σ 0 [k])
     ((noFixedPoints_rename query _).mpr hq) id A t η
   rw [eval_rename, sliced_environment] at hs
   have hempty : t ∘ (Fin.elim0 : Fin 0 → Fin d) = Fin.elim0 := funext fun i => Fin.elim0 i
-  simpa only [Function.comp_id, hempty] using
+  simpa only [Function.comp_id, hempty] using!
     and_congr (Lax751879Proofs.ClockLast.eval_formula id A t η) hs
 
 def table {n d k : Nat} (H : (Fin d → Fin n) → Set (Fin k → Fin n)) :

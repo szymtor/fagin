@@ -4,6 +4,8 @@ import Lax751879Proofs.DecoderCorrectness
 import Lax751879Proofs.StackRename
 import Lax751879Proofs.StackBoolean
 
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.PreprocessorLayout
 
 open Lax988886.FiniteStructures Lax751879Proofs

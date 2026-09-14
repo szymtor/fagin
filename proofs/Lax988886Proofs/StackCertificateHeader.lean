@@ -36,6 +36,6 @@ theorem prepend_executes (domain certificate tmp : K)
     · simp [u, Op.apply, Lax751879.StructureEncoding.unary, List.append_assoc]
   rw [hf] at he
   have h := Executes.seq hp he
-  convert h using 1 <;> omega
+  convert! h using 1 <;> omega
 
 end Lax988886Proofs.StackCertificateHeader

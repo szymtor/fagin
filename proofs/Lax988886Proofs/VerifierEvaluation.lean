@@ -67,7 +67,7 @@ theorem evaluate_executes (φ : Sentence σ) (w c : List Bool)
     have h := Executes.branch_false (b := fun s => s.1.2)
       (p := FormulaProgram.compile (FirstOrderEvaluation.raw φ.matrix) (inputs φ) (workPort φ))
       hf (answer_returns false (afterWitness φ w A.structureValue.size c))
-    simpa [evaluate, CertificateVerifier.verify, hd, hr] using h
+    simpa [evaluate, CertificateVerifier.verify, hd, hr] using! h
   | some R =>
     have ht : (afterWitness φ w A.structureValue.size c).state.1.2 = true := by
       simpa [hr] using hv
@@ -77,6 +77,6 @@ theorem evaluate_executes (φ : Sentence σ) (w c : List Bool)
       (fun _ => rfl) (represents φ w c A R hd hr)
     refine ⟨d + 1, by omega, ?_⟩
     have h := Executes.branch_true (b := fun s => s.1.2) (q := answer false) ht hp
-    simpa [evaluate, CertificateVerifier.verify, hd, hr] using h
+    simpa [evaluate, CertificateVerifier.verify, hd, hr] using! h
 
 end Lax988886Proofs.VerifierEvaluation

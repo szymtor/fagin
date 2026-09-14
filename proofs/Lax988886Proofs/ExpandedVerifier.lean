@@ -21,7 +21,7 @@ theorem ordered_definable {σ : Vocabulary} (V : List Bool × List Bool → Bool
     ((PreprocessorMachine.prepare σ k p (encode B)).1 &&
       V (PreprocessorMachine.prepare σ k p (encode B)).2) = true
   rw [PreprocessorMachine.prepare_encode]
-  simp only [RelationalVerifier.verified, PreprocessorCheck.accepts,
+  simp! only [RelationalVerifier.verified, PreprocessorCheck.accepts,
     PreprocessorCertificate.bits, Bool.and_eq_true, decide_eq_true_eq]
 
 end Lax988886Proofs.ExpandedVerifier

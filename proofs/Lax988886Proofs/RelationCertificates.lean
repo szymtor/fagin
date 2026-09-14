@@ -3,6 +3,9 @@ import Lax751879Proofs.DecoderSoundness
 import Lax751879Proofs.InputSize
 import Lax751879Proofs.PolynomialBounds
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.RelationCertificates
 
 open Lax988886.FiniteStructures
@@ -31,7 +34,7 @@ theorem encode_length {τ : Vocabulary} {n : Nat} (R : Interpretation τ n) :
   | cons k τ ih =>
     change (Decoding.relationBits n R).length = _
     rw [Decoding.relationBits_cons]
-    simpa [StructureEncoding.tuples_length] using
+    simpa [StructureEncoding.tuples_length] using!
       congrArg (n ^ k + ·) (ih (fun r => R r.succ))
 
 /-- Fixed relation arities give a polynomial certificate bound in the

@@ -1,5 +1,8 @@
 import Lax988886Proofs.RelationCertificates
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.BinaryCertificates
 
 open Lax988886.FiniteStructures Lax751879Proofs
@@ -48,7 +51,7 @@ theorem decode_length {n k : Nat} (R : Interpretation [k,k] n) :
     (decode R).length ≤ n ^ k := by
   have h := select_length ((Lax751879.StructureEncoding.tuples n k).map (R 0))
     ((Lax751879.StructureEncoding.tuples n k).map (R 1))
-  simpa [decode, StructureEncoding.tuples_length] using h
+  simpa [decode, StructureEncoding.tuples_length] using! h
 
 theorem decode_encode (n k : Nat) (c : List Bool) (hc : c.length ≤ n ^ k) :
     decode (encode n k c) = c := by

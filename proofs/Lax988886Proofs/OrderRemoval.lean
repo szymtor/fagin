@@ -35,7 +35,7 @@ theorem pull_order {τ : Vocabulary} {n : Nat} (R : Interpretation (2 :: τ) n)
     refine Fin.cases rfl (fun j => ?_) i
     exact Fin.cases rfl (fun j => Fin.elim0 j) j
   have hrel := (Iff.of_eq (congrArg (fun t => R 0 t = true) hpair)).trans (he (a 0) (a 1))
-  simpa only [decide_eq_true_eq] using hrel
+  simpa only [decide_eq_true_eq] using! hrel
 
 theorem eval_relabel {σ τ : Vocabulary} {m : Nat} (φ : FirstOrder σ τ m)
     (A : Structure σ) (e : Fin A.size ≃ Fin A.size) (R : Interpretation τ A.size)

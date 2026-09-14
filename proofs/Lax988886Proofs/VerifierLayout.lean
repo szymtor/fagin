@@ -163,7 +163,7 @@ theorem prepare_executes (φ : Sentence σ) (w c : List Bool) (n : Nat)
           rfl
   rw [hf] at hl
   have h := Executes.seq hp hl
-  convert h using 1 <;> omega
+  convert! h using 1 <;> omega
 
 theorem witness_executes (φ : Sentence σ) (w c : List Bool) (n : Nat) :
     ∃ d, d ≤ (StackDecoder.costPolynomial (FiniteDecoder.layout φ.witnesses 0)).eval
@@ -176,6 +176,6 @@ theorem witness_executes (φ : Sentence σ) (w c : List Bool) (n : Nat) :
   have h := StackEmbedding.executes_right
     (StackRename.executes_in_sum hp (fun _ : Extra φ => [])) (baseResult φ w).stk
   refine ⟨d, hd, ?_⟩
-  simpa only [StackEmbedding.rename_comp] using h
+  simpa only [StackEmbedding.rename_comp] using! h
 
 end Lax988886Proofs.VerifierLayout

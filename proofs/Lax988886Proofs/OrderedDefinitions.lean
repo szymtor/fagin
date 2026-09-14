@@ -1,6 +1,9 @@
 import Lax988886Proofs.PtimeExistential
 import Lax988886Proofs.ExistentialProjection
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.OrderedDefinitions
 
 open Lax988886.FiniteStructures

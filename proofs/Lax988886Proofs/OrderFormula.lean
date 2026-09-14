@@ -1,6 +1,9 @@
 import Lax988886Proofs.OrderEnumeration
 import Lax988886Proofs.OrderedFirstOrder
 
+-- Preserve Lean 4.30 definition unfolding during elaboration.
+set_option backward.isDefEq.respectTransparency false
+
 namespace Lax988886Proofs.OrderFormula
 
 open Lax988886.FiniteStructures Lax988886.ExistentialSecondOrder
