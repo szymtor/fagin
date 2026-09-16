@@ -5,7 +5,7 @@ finite relational structures is definable in existential second-order logic
 if and only if its binary encoding language belongs to NP. It includes empty
 universes and nullary relations and assumes no order on the input structure.
 
-Authors: Szymon Toruńczyk and Codex 6.
+Authors: Szymon Toruńczyk and GPT 6.
 
 The [four concept files](concepts/Lax988886) define finite structures,
 ordinary existential second-order syntax, the standard polynomial-certificate

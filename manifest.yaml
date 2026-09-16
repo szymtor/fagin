@@ -6,7 +6,7 @@ title: "Fagin’s theorem"
 authors:
   - name: "Szymon Toruńczyk"
     github: "szymtor"
-  - name: "Codex 6"
+  - name: "GPT 6"
 bibEntries:
   - |
     @incollection{Fagin1974,

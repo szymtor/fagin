@@ -1,3 +1,21 @@
+# Finalization authorized — in progress (2026-09-16)
+
+The user explicitly requested submission, consistent GPT author credits, and
+final registration of the current submissions. This supersedes the earlier
+keep-draft restriction and repository instructions against registration for
+this release. Preserve the model/version suffixes in the author names.
+
+Publish and register in dependency order, updating downstream pins to each
+accepted final source commit. Register only after verifying the Archive has
+accepted that exact commit and the intended metadata and proof obligations.
+The local tree preview was reviewed before this authorization.
+
+Next: complete validation, publish the updated draft, verify it, and register.
+The records below describe earlier checkpoints; none implies this release is
+already published or registered.
+
+## Previous status
+
 # Lean 4.33 draft migration
 
 Original draft: lax-678846. New draft: lax-988886; branch lean-4.33.
@@ -15,7 +33,10 @@ intentionally preserved, including regression interfaces and generated lemmas.
 The dependency on the Immerman–Vardi proof package is intentional and pinned
 to its published Lean 4.33 draft commit 22b06ecb75e26570ccfb67582c9e3d12e88fdf65.
 
-Next: push this validated branch and publish the independent archive draft.
+Published: https://laxarchive.org/lax-988886/ (archive issue 112).
+Commit: 0041a52c8a214b7d3a87b412c71450dd08f7adff.
+Archive rebuild passed in 3m45s; public record written in 34s.
+Next: no further work required for this draft.
 No registration requested or performed.
 
 ## Historical record from the original (not validation of this port)

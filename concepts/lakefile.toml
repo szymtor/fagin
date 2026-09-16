@@ -15,5 +15,5 @@ name = "Lax988886"
 [[require]]
 name = "Lax751879"
 git = "https://github.com/szymtor/immerman-vardi"
-rev = "22b06ecb75e26570ccfb67582c9e3d12e88fdf65"
+rev = "9fa09900c827396420a8bcfd22bc624e5c980a53"
 subDir = "concepts"
